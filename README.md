@@ -188,5 +188,3 @@ git push -u origin main
 ```
 
 Each member clones the repository with `git clone YOUR_GROUP_REPOSITORY_URL`. Start a branch from the latest `main` with `git switch main`, `git pull --ff-only`, and `git switch -c feature/contact-search`. Stage only your related files, use a specific commit message, and push with `git push -u origin feature/contact-search`. Open a pull request with a short description and your verification steps. Ask a teammate to review it before merging. Commit migration files with model changes and run `python manage.py migrate` after pulling schema changes.
-
-Use the [video outline and submission checklist](docs/DEMO.md) to prepare for the instructor's review.
