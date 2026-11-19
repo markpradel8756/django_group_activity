@@ -1,0 +1,90 @@
+{% extends "messaging/base.html" %}
+{% block content %}
+  <header class="page-heading">
+    <div>
+      <h1>Dashboard</h1>
+      <p>Monitor your SMS activity and delivery at a glance.</p>
+    </div>
+    <a class="button primary" href="{% url 'compose' %}">{% include "messaging/icon.html" with name="plus" %} New message</a>
+  </header>
+
+  <div class="metrics">
+    {% for label, count, icon, tone, description in metrics %}
+      <section class="card metric">
+        <span class="tile {{ tone }}">{% include "messaging/icon.html" with name=icon %}</span>
+        <h2>{{ label }}</h2>
+        <strong class="metric-value">{{ count }}</strong>
+        <p>{{ description }}</p>
+      </section>
+    {% endfor %}
+  </div>
+
+  <div class="dashboard-grid">
+    <section class="card activity" aria-labelledby="activity-title">
+      <header class="card-head">
+        <div><h2 id="activity-title">Message activity</h2><p>SMS attempts by day</p></div>
+        <div class="period">{% include "messaging/icon.html" with name="calendar-days" %} Last 7 days</div>
+      </header>
+      <figure class="chart">
+        <div class="chart-area" aria-hidden="true">
+          <div class="chart-axis">
+            {% for mark in activity.axis %}<span>{{ mark }}</span>{% endfor %}
+          </div>
+          <div class="plot">
+            <div class="grid-lines"><span></span><span></span><span></span><span></span><span></span></div>
+            <svg class="plot-line" viewBox="0 0 600 128" preserveAspectRatio="none">
+              {% if activity.total %}<polygon points="0,128 {{ activity.points }} 600,128" class="plot-fill"/>{% endif %}
+              <polyline points="{{ activity.points }}" class="plot-stroke"/>
+            </svg>
+            <div class="plot-dots">
+              {% for item in activity.series %}<span style="--x: {{ item.x }}; --y: {{ item.y }};" title="{{ item.day|date:'M j' }} · {{ item.count }}"></span>{% endfor %}
+            </div>
+            <div class="chart-days">
+              {% for item in activity.series %}<span>{{ item.day|date:"M j" }}</span>{% endfor %}
+            </div>
+          </div>
+        </div>
+        <figcaption class="chart-caption">
+          <span class="legend-key"><i aria-hidden="true"></i> SMS attempts</span>
+          <span>{{ activity.total }} in this period</span>
+          <span class="sr-only">{% for item in activity.series %}{{ item.day|date:"M j" }}, {{ item.count }}. {% endfor %}</span>
+        </figcaption>
+      </figure>
+    </section>
+
+    <section class="card provider-card" aria-labelledby="provider-title">
+      <header class="card-head">
+        <div><h2 id="provider-title">SMS provider</h2><p>textbee.dev Android gateway</p></div>
+        <span class="tile blue">{% include "messaging/icon.html" with name="plug" %}</span>
+      </header>
+      <dl class="provider-rows">
+        <div><dt>Android sender</dt><dd>
+          {% if provider_ready %}<span class="status status-delivered"><span></span>Configured</span>
+          {% else %}<span class="status status-pending"><span></span>Setup required</span>{% endif %}
+        </dd></div>
+        <div><dt>Delivery callbacks</dt><dd>
+          {% if callback_ready %}<span class="status status-delivered"><span></span>Secret configured</span>
+          {% else %}<span class="status status-unknown"><span></span>Off</span>{% endif %}
+        </dd></div>
+      </dl>
+      <a class="button secondary provider-button" href="{% url 'provider_settings' %}">Provider settings {% include "messaging/icon.html" with name="arrow-right" %}</a>
+    </section>
+  </div>
+
+  <section class="card recent" aria-labelledby="recent-title">
+    <header class="card-head">
+      <div><h2 id="recent-title">Recent messages</h2><p>Latest sending attempts</p></div>
+      <a class="button secondary" href="{% url 'history' %}">View history {% include "messaging/icon.html" with name="arrow-right" %}</a>
+    </header>
+    {% if recent %}
+      {% include "messaging/message_table.html" with rows=recent compact=True %}
+    {% else %}
+      <div class="empty recent-empty">
+        <span class="empty-icon">{% include "messaging/icon.html" with name="inbox" %}</span>
+        <h3>No messages yet</h3>
+        <p>Your sending attempts will appear here.</p>
+        <a class="text-link" href="{% url 'compose' %}">Compose your first SMS {% include "messaging/icon.html" with name="arrow-right" %}</a>
+      </div>
+    {% endif %}
+  </section>
+{% endblock %}

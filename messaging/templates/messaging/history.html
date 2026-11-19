@@ -1,0 +1,38 @@
+{% extends "messaging/base.html" %}
+{% block content %}
+  <header class="page-heading">
+    <div><h1>Message History</h1><p>Search sending attempts and check their delivery status.</p></div>
+    <a class="button primary" href="{% url 'compose' %}">{% include "messaging/icon.html" with name="plus" %} New message</a>
+  </header>
+  <section class="card">
+    <form method="get" class="table-filters">
+      <div class="filter-search field">
+        <label for="history-search">Search messages</label>
+        <div class="search-field">{% include "messaging/icon.html" with name="search" %}
+          <input id="history-search" name="q" type="search" value="{{ form.q.value|default:'' }}" placeholder="Search by recipient or message" maxlength="160">
+        </div>
+        {{ form.q.errors }}
+      </div>
+      <div class="field">{{ form.status.label_tag }}{{ form.status }}{{ form.status.errors }}</div>
+      <div class="field">{{ form.date.label_tag }}{{ form.date }}{{ form.date.errors }}</div>
+      <div class="filter-actions"><button class="button secondary" type="submit">Filter</button>
+        {% if filtered or form.errors %}<a class="text-link" href="{% url 'history' %}">Clear</a>{% endif %}
+      </div>
+    </form>
+    {% if page.object_list %}
+      {% include "messaging/message_table.html" with rows=page.object_list %}
+      {% include "messaging/pagination.html" %}
+    {% else %}
+      <div class="empty">
+        <span class="empty-icon">{% include "messaging/icon.html" with name="inbox" %}</span>
+        {% if filtered %}
+          <h2>No matching messages</h2><p>Try another search or clear your filters.</p>
+          <a class="text-link" href="{% url 'history' %}">Clear filters {% include "messaging/icon.html" with name="arrow-right" %}</a>
+        {% else %}
+          <h2>No sending attempts yet</h2><p>New messages and delivery updates will appear here.</p>
+          <a class="text-link" href="{% url 'compose' %}">Compose an SMS {% include "messaging/icon.html" with name="arrow-right" %}</a>
+        {% endif %}
+      </div>
+    {% endif %}
+  </section>
+{% endblock %}

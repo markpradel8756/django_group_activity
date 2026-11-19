@@ -1,0 +1,80 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7f9fc">
+  <title>{% block document_title %}{{ title }} · Relay{% endblock %}</title>
+  <link rel="icon" href="{% static 'messaging/relay.svg' %}" type="image/svg+xml">
+  <link rel="stylesheet" href="{% static 'messaging/app.css' %}">
+  <script src="{% static 'messaging/app.js' %}" defer></script>
+</head>
+<body>
+  {% block layout %}
+  <a class="skip-link" href="#main-content">Skip to content</a>
+  <div class="app">
+    <aside class="sidebar" id="sidebar" aria-label="Workspace">
+      <div class="sidebar-head">
+        <a class="brand" href="{% url 'dashboard' %}">
+          <span class="brand-mark">{% include "messaging/icon.html" with name="message-square-text" %}</span>
+          <span class="brand-copy"><strong>Relay</strong><small>SMS Workspace</small></span>
+        </a>
+        <button class="icon-button nav-close" type="button" data-nav-close aria-label="Close navigation">{% include "messaging/icon.html" with name="x" %}</button>
+      </div>
+      <nav class="main-nav" aria-label="Main navigation">
+        <div class="nav-label">Workspace</div>
+        {% include "messaging/nav_link.html" with route="dashboard" key="dashboard" icon="layout-dashboard" label="Dashboard" %}
+        {% include "messaging/nav_link.html" with route="compose" key="compose" icon="send" label="Send SMS" %}
+        {% include "messaging/nav_link.html" with route="history" key="history" icon="history" label="Message History" %}
+        {% include "messaging/nav_link.html" with route="contacts" key="contacts" icon="contact-round" label="Contacts" %}
+        <div class="nav-divider"></div>
+        {% include "messaging/nav_link.html" with route="provider_settings" key="settings" icon="settings" label="Settings" %}
+      </nav>
+      <div class="sidebar-foot">
+        <a class="workspace-link" href="{% url 'provider_settings' %}">
+          <span class="workspace-icon">{% include "messaging/icon.html" with name="plug" %}</span>
+          <span><strong>textbee.dev</strong><small>Provider settings</small></span>
+          {% include "messaging/icon.html" with name="chevron-right" extra="workspace-arrow" %}
+        </a>
+      </div>
+    </aside>
+    <button type="button" class="nav-scrim" tabindex="-1" aria-label="Close menu" data-nav-close hidden></button>
+    <div class="workspace">
+      <header class="topbar">
+        <div class="breadcrumbs">
+          <button class="icon-button menu-toggle" type="button" aria-label="Toggle navigation" aria-controls="sidebar" aria-expanded="false" data-nav-toggle>{% include "messaging/icon.html" with name="menu" %}</button>
+          <a href="{% url 'dashboard' %}" class="breadcrumb-root">Relay</a>
+          {% include "messaging/icon.html" with name="chevron-right" extra="breadcrumb-arrow" %}
+          <span>{{ title }}</span>
+        </div>
+        <div class="top-account">
+          <span class="avatar" aria-hidden="true">{{ user.get_username|default:"R"|first|upper }}</span>
+          <span class="account-name">{{ user.get_username|default:"Workspace" }}</span>
+          {% if user.is_authenticated %}
+            <form action="{% url 'logout' %}" method="post">{% csrf_token %}
+              <button class="icon-button" type="submit" aria-label="Sign out" title="Sign out">{% include "messaging/icon.html" with name="log-out" %}</button>
+            </form>
+          {% endif %}
+        </div>
+      </header>
+      <main class="content" id="main-content">
+        {% if messages %}
+          <div class="flash-list">
+            {% for message in messages %}
+              <div class="notice {{ message.tags }}" role="{% if message.tags == 'error' %}alert{% else %}status{% endif %}">
+                {% if message.tags == "success" %}{% include "messaging/icon.html" with name="circle-check" %}
+                {% elif message.tags == "error" or message.tags == "warning" %}{% include "messaging/icon.html" with name="circle-alert" %}
+                {% else %}{% include "messaging/icon.html" with name="info" %}{% endif %}
+                <span>{{ message }}</span>
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+        {% block content %}{% endblock %}
+      </main>
+    </div>
+  </div>
+  {% endblock %}
+</body>
+</html>

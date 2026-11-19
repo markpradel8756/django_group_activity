@@ -1,0 +1,20 @@
+<div class="table-wrap" tabindex="0" role="region" aria-label="Message records">
+  <table class="data-table message-table">
+    <thead>
+      <tr><th scope="col">Recipient</th><th scope="col">Message</th><th scope="col">Date and time</th>
+        {% if not compact %}<th scope="col">Provider ID</th>{% endif %}<th scope="col">Status</th><th scope="col">Actions</th></tr>
+    </thead>
+    <tbody>
+      {% for attempt in rows %}
+        <tr>
+          <td class="cell-primary">{{ attempt.recipient }}</td>
+          <td class="cell-preview">{{ attempt.body|truncatechars:54 }}</td>
+          <td class="cell-time"><time datetime="{{ attempt.created_at|date:'c' }}">{{ attempt.created_at|date:"M j, Y" }}<small>{{ attempt.created_at|time:"g:i A" }}</small></time></td>
+          {% if not compact %}<td>{% if attempt.provider_reference %}<span class="reference-preview" title="{{ attempt.provider_reference }}">{{ attempt.provider_reference|truncatechars:14 }}</span>{% else %}—{% endif %}</td>{% endif %}
+          <td>{% include "messaging/status.html" %}</td>
+          <td><a class="text-link row-action" href="{% url 'message_detail' attempt.pk %}">Details {% include "messaging/icon.html" with name="chevron-right" %}</a></td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>

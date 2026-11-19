@@ -1,0 +1,14 @@
+{% if page.paginator.num_pages > 1 %}
+  <nav class="pagination" aria-label="Pagination">
+    <p>Showing {{ page.start_index }}–{{ page.end_index }} of {{ page.paginator.count }}</p>
+    <div class="page-controls">
+      {% if page.has_previous %}
+        <a class="icon-button page-button" href="{% querystring page=page.previous_page_number %}" aria-label="Previous page">{% include "messaging/icon.html" with name="chevron-left" %}</a>
+      {% endif %}
+      <span>Page {{ page.number }} of {{ page.paginator.num_pages }}</span>
+      {% if page.has_next %}
+        <a class="icon-button page-button" href="{% querystring page=page.next_page_number %}" aria-label="Next page">{% include "messaging/icon.html" with name="chevron-right" %}</a>
+      {% endif %}
+    </div>
+  </nav>
+{% endif %}

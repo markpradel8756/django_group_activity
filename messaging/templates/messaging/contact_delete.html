@@ -1,0 +1,16 @@
+{% extends "messaging/base.html" %}
+{% block content %}
+  <a class="text-link back-link" href="{% url 'contacts' %}">{% include "messaging/icon.html" with name="arrow-left" %} Contacts</a>
+  <header class="page-heading"><div><h1>Delete Contact</h1><p>Remove this recipient from your saved contacts.</p></div></header>
+  <section class="card narrow">
+    <header class="card-head bordered"><div><h2>{{ contact.name }}</h2><p>{{ contact.phone }}</p></div><span class="tile red">{% include "messaging/icon.html" with name="trash-2" %}</span></header>
+    <form method="post" class="card-body">
+      {% csrf_token %}
+      <p class="muted">Delete this contact from the address book?</p>
+      <div class="form-footer">
+        <a class="button secondary" href="{% url 'contacts' %}">Cancel</a>
+        <button type="submit" class="button danger">Delete contact</button>
+      </div>
+    </form>
+  </section>
+{% endblock %}

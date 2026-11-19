@@ -1,0 +1,4 @@
+Django==5.2.19
+python-dotenv==1.2.4
+phonenumberslite==9.0.43
+requests==2.34.2

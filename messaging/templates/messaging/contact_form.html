@@ -1,0 +1,23 @@
+{% extends "messaging/base.html" %}
+{% block content %}
+  <a class="text-link back-link" href="{% url 'contacts' %}">{% include "messaging/icon.html" with name="arrow-left" %} Contacts</a>
+  <header class="page-heading"><div><h1>{{ title }}</h1><p>Use the international format for the contact’s phone number.</p></div></header>
+  <section class="card narrow">
+    <form method="post" class="card-body contact-form" novalidate>
+      {% csrf_token %}
+      {{ form.non_field_errors }}
+      <div class="field">{{ form.name.label_tag }}{{ form.name }}{{ form.name.errors }}</div>
+      <div class="field">{{ form.phone.label_tag }}{{ form.phone }}{{ form.phone.errors }}
+        <p class="field-note" id="phone-help">Include the country code, starting with +.</p>
+      </div>
+      <div class="field">
+        <label for="{{ form.description.id_for_label }}">Description <span class="optional">Optional</span></label>
+        {{ form.description }}{{ form.description.errors }}
+      </div>
+      <div class="form-footer">
+        <a class="button secondary" href="{% url 'contacts' %}">Cancel</a>
+        <button type="submit" class="button primary">Save contact</button>
+      </div>
+    </form>
+  </section>
+{% endblock %}

@@ -1,0 +1,81 @@
+{% extends "messaging/base.html" %}
+{% block content %}
+  <header class="page-heading">
+    <div><h1>Send SMS</h1><p>Compose and preview a text message before sending it.</p></div>
+  </header>
+
+  {% if not provider_ready %}
+    <div class="notice warning setup-notice" role="status">
+      {% include "messaging/icon.html" with name="circle-alert" %}
+      <div>Set up your textbee API key and Android sender in <a href="{% url 'provider_settings' %}">Settings</a>.</div>
+    </div>
+  {% endif %}
+  <div class="compose-grid">
+    <section class="card">
+      <header class="card-head bordered"><div><h2>New message</h2><p>Send to an international phone number or saved contact.</p></div></header>
+      <form method="post" class="card-body compose-form" id="sms-form" novalidate data-submit-once>
+        {% csrf_token %}
+        {{ form.submission_token }}
+        {{ form.submission_token.errors }}
+        {{ form.non_field_errors }}
+        {% if contacts %}
+          <div class="field">
+            <label for="saved-contact">Saved contact <span class="optional">Optional</span></label>
+            <select id="saved-contact">
+              <option value="">Choose a saved contact</option>
+              {% for contact in contacts %}
+                <option value="{{ contact.phone }}"{% if contact.phone == form.recipient.value %} selected{% endif %}>{{ contact.name }} · {{ contact.phone }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        {% else %}
+          <p class="field-note contact-note">{% include "messaging/icon.html" with name="contact-round" %} <a href="{% url 'contact_add' %}">Add a contact</a> to use saved numbers here.</p>
+        {% endif %}
+        <div class="field">
+          {{ form.recipient.label_tag }}
+          {{ form.recipient }}
+          {{ form.recipient.errors }}
+          <p class="field-note" id="phone-help">Include the country code, starting with +.</p>
+        </div>
+        <div class="field">
+          {{ form.body.label_tag }}
+          {{ form.body }}
+          {{ form.body.errors }}
+          <div class="composer-meta" id="message-help">
+            <span id="sms-segments">SMS segment estimate</span>
+            <span id="sms-chars">Up to 9,000 bytes</span>
+          </div>
+          <p id="sms-over-limit" class="field-note limit-warning" hidden>Shorten your message to fit textbee’s 9,000-byte limit.</p>
+        </div>
+        <div class="form-footer" id="send-controls">
+          <a class="text-link preview-jump" href="#preview-title">Review preview</a>
+          <a class="button secondary" href="{% url 'dashboard' %}">Cancel</a>
+          <button type="submit" class="button primary" data-loading-label="Sending…">{% include "messaging/icon.html" with name="send" %} <span data-button-label>Send SMS</span></button>
+        </div>
+      </form>
+    </section>
+
+    <section class="card preview-card" aria-labelledby="preview-title">
+      <header class="card-head bordered">
+        <div><h2 id="preview-title">Message preview</h2><p>Review the recipient and text.</p></div>
+        <span class="tile blue">{% include "messaging/icon.html" with name="smartphone" %}</span>
+      </header>
+      <div class="preview-stage">
+        <div class="phone-preview">
+          <div class="phone-speaker" aria-hidden="true"></div>
+          <div class="phone-recipient">
+            <div class="phone-avatar">{% include "messaging/icon.html" with name="message-square-text" %}</div>
+            <div class="phone-label">To</div>
+            <div id="preview-number">{{ form.recipient.value|default:"Recipient number" }}</div>
+          </div>
+          <div class="phone-message">
+            <div id="preview-body" class="sms-bubble">{{ form.body.value|default:"Your message will appear here." }}</div>
+          </div>
+        </div>
+      </div>
+      <div class="preview-footer">{% include "messaging/icon.html" with name="info" %}<span>Segment counts are estimates and can vary by carrier.</span></div>
+      <a class="text-link preview-jump preview-return" href="#send-controls">Return to sending controls {% include "messaging/icon.html" with name="arrow-right" %}</a>
+    </section>
+  </div>
+  {{ sms_encoding|json_script:"sms-encoding" }}
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends "messaging/base.html" %}
+{% block document_title %}Request interrupted · Relay{% endblock %}
+{% block layout %}
+  <main class="sign-in">
+    <section class="card sign-in-card">
+      <div class="brand"><span class="brand-mark">{% include "messaging/icon.html" with name="message-square-text" %}</span>
+        <span class="brand-copy"><strong>Relay</strong><small>SMS Workspace</small></span>
+      </div>
+      <h1>Request interrupted</h1>
+      <p class="muted">Something went wrong. If you were sending an SMS, check message history and the textbee dashboard before sending again.</p>
+      <p class="back-link error-page-link"><a class="text-link" href="{% url 'dashboard' %}">Return to dashboard {% include "messaging/icon.html" with name="arrow-right" %}</a></p>
+    </section>
+  </main>
+{% endblock %}

@@ -1,0 +1,40 @@
+{% extends "messaging/base.html" %}
+{% block content %}
+  <header class="page-heading"><div><h1>Settings</h1><p>Review your textbee integration and workspace configuration.</p></div></header>
+  <div class="settings-grid">
+    <section class="card">
+      <header class="card-head bordered"><div><h2>textbee.dev integration</h2><p>Android SMS gateway</p></div><span class="tile blue">{% include "messaging/icon.html" with name="plug" %}</span></header>
+      <dl class="details-list settings-details">
+        <div><dt>API key</dt><dd>{% if credentials_ready %}<span class="status status-delivered"><span></span>Configured</span>{% else %}<span class="status status-pending"><span></span>Setup required</span>{% endif %}</dd></div>
+        <div><dt>Android device ID</dt><dd>{% if sender_ready %}<span class="status status-delivered"><span></span>Configured</span>{% else %}<span class="status status-pending"><span></span>Setup required</span>{% endif %}</dd></div>
+        <div><dt>Delivery callbacks</dt><dd>{% if callback_ready %}<span class="status status-delivered"><span></span>Secret configured</span>{% else %}<span class="status status-unknown"><span></span>Off</span>{% endif %}</dd></div>
+        <div><dt>Last connection check</dt><dd>{{ last_check }}</dd></div>
+      </dl>
+      <form method="post" class="settings-action" data-submit-once>
+        {% csrf_token %}
+        <button type="submit" class="button secondary" data-loading-label="Checking…">{% include "messaging/icon.html" with name="refresh-cw" %} <span data-button-label>Check connection</span></button>
+      </form>
+    </section>
+
+    <section class="card">
+      <header class="card-head bordered"><div><h2>Local configuration</h2><p>Environment variables</p></div><span class="tile indigo">{% include "messaging/icon.html" with name="terminal" %}</span></header>
+      <div class="card-body config-steps">
+        <ol>
+          <li>Open <code>.env</code> in the project folder. Use <code>.env.example</code> if you need to create it.</li>
+          <li>Register your Android phone in textbee and give it permission to send SMS.</li>
+          <li>Set <code>TEXTBEE_API_KEY</code> and <code>TEXTBEE_DEVICE_ID</code> from the textbee dashboard.</li>
+          <li>Restart Django and choose <strong>Check connection</strong> to verify access to the device.</li>
+        </ol>
+        <p class="field-note">For callbacks, set <code>TEXTBEE_WEBHOOK_SECRET</code> and subscribe to delivery events in textbee. See the README for setup.</p>
+      </div>
+    </section>
+    <section class="card">
+      <header class="card-head bordered"><h2>Application</h2></header>
+      <dl class="details-list settings-details">
+        <div><dt>Workspace</dt><dd>Relay · SMS Workspace</dd></div>
+        <div><dt>Display time zone</dt><dd>{{ timezone }}</dd></div>
+        <div><dt>Workspace access</dt><dd>{% if login_required %}Sign-in required{% else %}Local demo{% endif %}</dd></div>
+      </dl>
+    </section>
+  </div>
+{% endblock %}

@@ -1,0 +1,34 @@
+{% extends "messaging/base.html" %}
+{% block content %}
+  <a class="text-link back-link" href="{% url 'history' %}">{% include "messaging/icon.html" with name="arrow-left" %} Message history</a>
+  <header class="page-heading">
+    <div><h1>Message Details</h1><p>Review this SMS and its current delivery status.</p></div>
+    {% if attempt.can_refresh %}
+      <form method="post" action="{% url 'refresh_status' attempt.pk %}" data-submit-once>
+        {% csrf_token %}
+        <button type="submit" class="button secondary" data-loading-label="Checking…">{% include "messaging/icon.html" with name="refresh-cw" %} <span data-button-label>Refresh status</span></button>
+      </form>
+    {% endif %}
+  </header>
+  <div class="compose-grid">
+    <section class="card">
+      <header class="card-head bordered"><div><h2>SMS message</h2><p>To {{ attempt.recipient }}</p></div><span class="tile blue">{% include "messaging/icon.html" with name="message-square-text" %}</span></header>
+      <div class="card-body"><div class="message-content">{{ attempt.body }}</div></div>
+    </section>
+    <section class="card">
+      <header class="card-head bordered"><h2>Delivery information</h2>{% include "messaging/status.html" %}</header>
+      <dl class="details-list">
+        <div><dt>Attempt created</dt><dd>{{ attempt.created_at|date:"M j, Y · g:i A T" }}</dd></div>
+        <div><dt>Provider</dt><dd>{{ attempt.get_provider_display }}</dd></div>
+        <div><dt>Submitted to provider</dt><dd>{{ attempt.submitted_at|date:"M j, Y · g:i A T"|default:"—" }}</dd></div>
+        <div><dt>Delivery confirmed</dt><dd>{{ attempt.delivered_at|date:"M j, Y · g:i A T"|default:"—" }}</dd></div>
+        <div><dt>Updated</dt><dd>{{ attempt.updated_at|date:"M j, Y · g:i A T" }}</dd></div>
+        <div><dt>{% if attempt.provider == 'textbee' %}textbee batch ID{% else %}Provider reference{% endif %}</dt><dd class="mono">{{ attempt.provider_reference|default:"—" }}</dd></div>
+        {% if attempt.error_code %}<div><dt>Provider error code</dt><dd class="mono">{{ attempt.error_code }}</dd></div>{% endif %}
+      </dl>
+      {% if attempt.error_message %}
+        <div class="detail-notice"><div class="notice {% if attempt.status == 'UNKNOWN' %}warning{% else %}error{% endif %}">{% include "messaging/icon.html" with name="circle-alert" %}<span>{{ attempt.error_message }}</span></div></div>
+      {% endif %}
+    </section>
+  </div>
+{% endblock %}

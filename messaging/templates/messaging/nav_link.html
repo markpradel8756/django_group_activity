@@ -1,0 +1,4 @@
+<a href="{% url route %}" class="nav-link{% if section == key %} active{% endif %}"{% if section == key %} aria-current="{% if request.resolver_match.url_name == route %}page{% else %}true{% endif %}"{% endif %}>
+  {% include "messaging/icon.html" with name=icon %}
+  <span>{{ label }}</span>
+</a>
