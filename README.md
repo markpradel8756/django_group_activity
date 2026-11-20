@@ -166,17 +166,9 @@ On macOS or Linux, replace `& $relayPython` with `python` in the activated envir
 - Segment counts are estimates. Relay enforces textbee's 9,000-byte limit using modified UTF-8, in which characters such as emoji can consume multiple bytes. Your phone, SIM and carrier affect sending and charges. [textbee sending guide](https://textbee.dev/docs/sending-sms/sending-sms)
 - This project handles single-recipient outbound SMS. Incoming replies, campaigns, and multi-tenant accounts are outside the classroom project scope. Obtain consent, identify the sender, and respect opt-outs when testing.
 
-## Group members and GitHub
+## GitHub
 
-Replace the open names with the actual group members and record their contributions after the work is done. These roles are suggestions.
-
-| Group member | Suggested area | Actual contribution |
-| --- | --- | --- |
-| Add member name | Django models, views, routing, and database | Add completed work and PR links |
-| Add member name | Templates, responsive UI, and JavaScript | Add completed work and PR links |
-| Add member name | textbee, automated tests, and demo preparation | Add completed work and PR links |
-
-One member creates the group's GitHub repository. From this folder, add the source and verify the staging list before committing. Replace `YOUR_GROUP_REPOSITORY_URL` with its actual clone URL.
+From this folder, add the source and verify the staging list before committing. Replace `YOUR_GROUP_REPOSITORY_URL` with its actual clone URL.
 
 ```text
 git init -b main
